@@ -1,0 +1,15 @@
+{
+  "types": "情侣",
+  "img_list": [
+    {
+      "demo_img": "cloud://wat-bf2469.7761-wat-bf2469-1257469597/images/demo/qinglv01.jpg",
+      "temp_img": "cloud://wat-bf2469.7761-wat-bf2469-1257469597/images/temp/qinglv01_1.png",
+      "desc": "情侣男"
+    },
+    {
+      "demo_img": "cloud://wat-bf2469.7761-wat-bf2469-1257469597/images/demo/qinglv02.jpg",
+      "temp_img": "cloud://wat-bf2469.7761-wat-bf2469-1257469597/images/temp/qinglv02_2.png",
+      "desc": "情侣女"
+    }
+  ]
+}

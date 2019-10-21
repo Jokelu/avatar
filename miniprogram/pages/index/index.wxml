@@ -1,0 +1,42 @@
+<!--index.wxml-->
+<!-- <image class='bg' src='../../image/20190829-bg.png'></image> -->
+<view class="container">
+  <view class="content">
+    <view class="title">私人定制专属头像</view>
+    <view class="box">
+      <view class="upload" bindtap="selectImg" hidden="{{hasUserInfo}}">
+        <image class="add" src="../../image/add.png"></image>
+      </view>
+      <canvas class='canvas' canvas-id="canvas" hidden="{{!hasUserInfo}}" style='width:180px;height:180px'></canvas>
+    </view>
+    <view class="operate">
+      <button class="btn" open-type="share">
+        <image class="img" src="../../image/share.png"></image>
+        <text>分享</text>
+      </button>
+      <button class="btn" bindtap="onsave">
+        <image class="img" src="../../image/save.png"></image>
+        <text>保存</text>
+      </button>
+    </view>
+  </view>
+
+  <view class="footer">
+    <view class="types">
+      <view class="item {{currentTypeIndex == index?'currentType':''}}" wx:for="{{imageList}}" wx:key="{{index}}" bindtap="changeType" data-index="{{index}}" data-text="{{item}}">{{item.types}}</view>
+    </view>
+    <view class="imgList">
+      <view class="current">
+        <view class="imgitem {{currentItemIndex == index?'currentItem':''}}" wx:for="{{tempList}}" wx:key="{{index}}" bindtap="selectWidgets" data-item="{{item}}" data-index="{{index}}">
+          <image class="demo" src="{{item.demo_img || '../../image/template.jpg'}}"></image>
+          <view class="desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+<view class="mask" bindtap="close" hidden="{{isShow}}"></view>
+<view class="actionsheet" hidden="{{isShow}}">
+  <button class="as" open-type="getUserInfo" bindgetuserinfo="getUserInfo">微信头像</button>
+  <button class="as close" bindtap="close">关闭</button>
+</view>
