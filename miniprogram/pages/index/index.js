@@ -15,58 +15,59 @@ Page({
     currentTypeIndex: 0,
     isShow: true,
     newAvatar: '',
-    imageList:[],
-    tempList:[],
-    currentItemIndex:null,
-    hotList: [{
-        url: '../../image/1.jpg',
-        mengUrl: '../../image/meng1.png',
-        text: '萌妹子'
-      },
-      {
-        url: '../../image/2.jpg',
-        mengUrl: '../../image/meng2.png',
-        text: '呆萌'
-      },
-      {
-        url: '../../image/3.jpg',
-        mengUrl: '../../image/meng3.png',
-        text: '情侣男'
-      },
-      {
-        url: '../../image/4.jpg',
-        mengUrl: '../../image/meng4.png',
-        text: '情侣女'
-      },
-      {
-        url: '../../image/07.jpg',
-        mengUrl: '../../image/07.png',
-        text: '太难了'
-      },
-    ],
-    lovelyList: [{
-        url: '../../image/1.jpg',
-        mengUrl: '../../image/meng1.png',
-        text: '萌妹子'
-      },
-      {
-        url: '../../image/2.jpg',
-        mengUrl: '../../image/meng2.png',
-        text: '呆萌'
-      },
-    ],
-    kingList: [],
-    loversList: [{
-        url: '../../image/3.jpg',
-        mengUrl: '../../image/meng3.png',
-        text: '情侣男'
-      },
-      {
-        url: '../../image/4.jpg',
-        mengUrl: '../../image/meng4.png',
-        text: '情侣女'
-      },
-    ],
+    imageList: [],
+    tempList: [],
+    currentItemIndex: null,
+    currentType: "热门"
+    // hotList: [{
+    //     url: '../../image/1.jpg',
+    //     mengUrl: '../../image/meng1.png',
+    //     text: '萌妹子'
+    //   },
+    //   {
+    //     url: '../../image/2.jpg',
+    //     mengUrl: '../../image/meng2.png',
+    //     text: '呆萌'
+    //   },
+    //   {
+    //     url: '../../image/3.jpg',
+    //     mengUrl: '../../image/meng3.png',
+    //     text: '情侣男'
+    //   },
+    //   {
+    //     url: '../../image/4.jpg',
+    //     mengUrl: '../../image/meng4.png',
+    //     text: '情侣女'
+    //   },
+    //   {
+    //     url: '../../image/07.jpg',
+    //     mengUrl: '../../image/07.png',
+    //     text: '太难了'
+    //   },
+    // ],
+    // lovelyList: [{
+    //     url: '../../image/1.jpg',
+    //     mengUrl: '../../image/meng1.png',
+    //     text: '萌妹子'
+    //   },
+    //   {
+    //     url: '../../image/2.jpg',
+    //     mengUrl: '../../image/meng2.png',
+    //     text: '呆萌'
+    //   },
+    // ],
+    // kingList: [],
+    // loversList: [{
+    //     url: '../../image/3.jpg',
+    //     mengUrl: '../../image/meng3.png',
+    //     text: '情侣男'
+    //   },
+    //   {
+    //     url: '../../image/4.jpg',
+    //     mengUrl: '../../image/meng4.png',
+    //     text: '情侣女'
+    //   },
+    // ],
   },
   //事件处理函数
   bindViewTap: function() {
@@ -80,7 +81,7 @@ Page({
       data: {},
       success: (res) => {
         this.setData({
-          imageList:res.result.result.data,
+          imageList: res.result.result.data,
           tempList: res.result.result.data[0].img_list
         })
       }
@@ -120,27 +121,44 @@ Page({
     }
   },
   selectWidgets(e) {
+    const that = this
     let data = e.currentTarget.dataset
     let avatarUrl = wx.getStorageSync('avatarUrl')
+    if (!avatarUrl) {
+      wx.showToast({
+        title: '点击上方授权头像',
+        icon: "none"
+      })
+      return
+    }
+    wx.showLoading({
+      title: '图片合成中......',
+    })
     let widgetsUrl = data.item.temp_img
     this.setData({
-      currentItemIndex:data.index
+      currentItemIndex: data.index
     })
     wx.cloud.getTempFileURL({
       fileList: [widgetsUrl],
       success: res => {
-        wx.setStorageSync('widgetsUrl', res.fileList[0].tempFileURL)
-        this.drawImage(avatarUrl, res.fileList[0].tempFileURL)
+        wx.getImageInfo({
+          src: res.fileList[0].tempFileURL,
+          success: function(e) {
+            that.drawImage(avatarUrl, e.path)
+            wx.setStorageSync('widgetsUrl', e.path)
+          }
+        })
       }
     })
-    wx.setStorageSync('widgetsUrl', widgetsUrl)
   },
   scroll(e) {},
   changeType(e) {
     let data = e.currentTarget.dataset
     this.setData({
       currentTypeIndex: data.index,
-      tempList:this.data.imageList[data.index].img_list
+      currentType: data.type,
+      tempList: this.data.imageList[data.index].img_list,
+      currentItemIndex: null
     })
   },
   selectImg() {
@@ -162,14 +180,13 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
-    wx.showLoading({
-      title: '图片合成中......',
-    })
-    // let widgetsUrl = '../../image/1.jpg'
     that.drawImage(avatarUrl)
   },
   drawImage: function(file, widgetsUrl) {
     const that = this
+    wx.showLoading({
+      title: '图片合成中......',
+    })
     wx.getImageInfo({
       src: file,
       success: function(res) {
@@ -178,11 +195,10 @@ Page({
         let imgPath = res.path
         var context = wx.createCanvasContext('canvas')
         context.drawImage(res.path, 0, 0, imgW, imgH, 0, 0, 180, 180)
-
         if (widgetsUrl) {
           context.drawImage(widgetsUrl, 0, 0, 180, 180)
         }
-        context.draw(true, () => {
+        context.draw(false, () => {
           setTimeout(() => {
             wx.canvasToTempFilePath({
               x: 0,
@@ -202,15 +218,9 @@ Page({
               },
               fail: function(err) {
                 wx.hideLoading()
-                // wx.showModal({
-                //   title: '温馨提示',
-                //   content: '合成失败',
-                //   showCancel: false
-                // })
-                console.log(err)
               }
             })
-          }, 200)
+          }, 100)
         })
       }
     })
@@ -220,7 +230,6 @@ Page({
     let newAvatar = wx.getStorageSync('newAvatar')
     wx.getSetting({
       success(res) {
-        console.log((typeof res.authSetting['scope.writePhotosAlbum']) == 'undefined')
         if ((typeof res.authSetting['scope.writePhotosAlbum']) == 'undefined') {
           wx.saveImageToPhotosAlbum({
             filePath: that.data.newAvatar || newAvatar,

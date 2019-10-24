@@ -23,11 +23,11 @@
 
   <view class="footer">
     <view class="types">
-      <view class="item {{currentTypeIndex == index?'currentType':''}}" wx:for="{{imageList}}" wx:key="{{index}}" bindtap="changeType" data-index="{{index}}" data-text="{{item}}">{{item.types}}</view>
+      <view class="item {{currentTypeIndex == index?'currentType':''}}" wx:for="{{imageList}}" wx:key="{{index}}" bindtap="changeType" data-index="{{index}}" data-type="{{item.types}}">{{item.types}}</view>
     </view>
     <view class="imgList">
-      <view class="current">
-        <view class="imgitem {{currentItemIndex == index?'currentItem':''}}" wx:for="{{tempList}}" wx:key="{{index}}" bindtap="selectWidgets" data-item="{{item}}" data-index="{{index}}">
+      <view class="current" wx:for="{{imageList}}" wx:key="{{index}}" hidden="{{currentType != item.types}}">
+        <view class="imgitem {{currentItemIndex == index?'currentItem':''}}" wx:for="{{item.img_list}}" wx:key="{{index}}" bindtap="selectWidgets" data-item="{{item}}" data-index="{{index}}">
           <image class="demo" src="{{item.demo_img || '../../image/template.jpg'}}"></image>
           <view class="desc">{{item.desc}}</view>
         </view>
