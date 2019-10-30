@@ -7,7 +7,7 @@
       <view class="upload" bindtap="selectImg" hidden="{{hasUserInfo}}">
         <image class="add" src="../../image/add.png"></image>
       </view>
-      <canvas class='canvas' canvas-id="canvas" hidden="{{!hasUserInfo}}" style='width:180px;height:180px'></canvas>
+      <canvas class='canvas' bindtap="selectImg" canvas-id="canvas" hidden="{{!hasUserInfo}}" style='width:180px;height:180px'></canvas>
     </view>
     <view class="operate">
       <button class="btn" open-type="share">
@@ -38,5 +38,6 @@
 <view class="mask" bindtap="close" hidden="{{isShow}}"></view>
 <view class="actionsheet" hidden="{{isShow}}">
   <button class="as" open-type="getUserInfo" bindgetuserinfo="getUserInfo">微信头像</button>
+   <button class="as" bindtap="chooseImg">相册</button>
   <button class="as close" bindtap="close">关闭</button>
 </view>

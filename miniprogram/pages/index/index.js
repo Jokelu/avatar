@@ -171,6 +171,22 @@ Page({
       isShow: true
     })
   },
+  chooseImg() {
+    const that = this
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['original', 'compressed'],
+      sourceType: ['album', 'camera'],
+      success(res) {
+        console.log(res)
+        // tempFilePath可以作为img标签的src属性显示图片
+        const avatarUrl = res.tempFilePaths[0]
+        let widgetsUrl = wx.getStorageSync('widgetsUrl')
+        wx.setStorageSync('avatarUrl', avatarUrl)
+        that.drawImage(avatarUrl, widgetsUrl)
+      }
+    })
+  },
   getUserInfo: function(e) {
     const that = this
     app.globalData.userInfo = e.detail.userInfo
@@ -180,7 +196,8 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
-    that.drawImage(avatarUrl)
+    let widgetsUrl = wx.getStorageSync('widgetsUrl')
+    that.drawImage(avatarUrl, widgetsUrl)
   },
   drawImage: function(file, widgetsUrl) {
     const that = this
